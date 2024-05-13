@@ -9,7 +9,6 @@ export class addUser{
      @IsNotEmpty()
      name: string;
 
-     @IsEmail()
      @IsNotEmpty()
-     email: string;
+     password: string;
 }

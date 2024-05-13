@@ -13,18 +13,19 @@ export class UserController{
 
     constructor(
         private readonly userService: UserService,
-        @Inject('APP_NAME') private appName: string,
-        @Inject('APP_ARRAY') private appArray: string[],
-        @Inject('APP_OBJECT') private appObject: object,
-        @Inject('App_Mode') private appMode: string
+        // @Inject('APP_NAME') private appName: string,
+        // @Inject('APP_ARRAY') private appArray: string[],
+        // @Inject('APP_OBJECT') private appObject: object,
+        // @Inject('App_Mode') private appMode: string
     ) {
-        console.log(appName, appArray, appObject, appMode, 'appNameappNameappName')
+        //console.log(appName, appArray, appObject, appMode, 'appNameappNameappName')
     }
     // add user
     @Post('/add')
-    addUser(@Body() body:addUser):string {
-        throw new IdException('chitra add user')
-        return this.userService.addUser(body);
+    async addUser(@Body() body:addUser):Promise<any>  {
+        //throw new IdException('chitra add user')
+       const res =  await this.userService.addUser(body);
+        return res
     }
 
     //update user
@@ -47,16 +48,16 @@ export class UserController{
 
     @Get(':userId')
     findOne(@Param('userId') userId: number): string {
-        if(userId <= 0){
-            //------------------Exception filter-------------------
-            //throw new error() // Unregonized error
-            //throw new HttpException('Id is not vaild', HttpStatus.BAD_REQUEST) // Bad Request error
-            //throw new BadRequestException({message:'Id is not vaild', error:'error hai'}) // Bad Request error
+        // if(userId <= 0){
+        //     //------------------Exception filter-------------------
+        //     //throw new error() // Unregonized error
+        //     //throw new HttpException('Id is not vaild', HttpStatus.BAD_REQUEST) // Bad Request error
+        //     //throw new BadRequestException({message:'Id is not vaild', error:'error hai'}) // Bad Request error
 
-            //--------------Custom Exception filter----------------
-            throw new IdException('chitra get detail')
+        //     //--------------Custom Exception filter----------------
+        //     throw new IdException('chitra get detail')
 
-        }
+        // }
         return this.userService.findOne(userId);
     }
 
