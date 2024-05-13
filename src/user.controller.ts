@@ -1,4 +1,4 @@
-import { HttpException, Controller, Get, Post, Put, Delete, Param, Req, HttpCode, HttpStatus, Res, Header, Redirect, HostParam, Body, Inject, BadRequestException, UseFilters} from '@nestjs/common';
+import { HttpException, Controller, Get, Post, Put, Delete, Param, Req, HttpCode, HttpStatus, Res, Header, Redirect, HostParam, Body, Inject, BadRequestException, UseFilters, UseGuards} from '@nestjs/common';
 import { UserService } from './user.service'
 import { Request, Response } from 'express';
 import { addUser } from './user.dto';
@@ -6,7 +6,8 @@ import { error } from 'console';
 import { IdException } from './exception/id.exception'; 
 import { catchError } from 'rxjs';
 import { IdExceptionFilter } from './exception/id.exception.filter';
-
+import { UserGaurd } from './user.guard';
+@UseGuards(new UserGaurd())
 @Controller({path:'/user', host: 'localhost' })
 ///@UseFilters(IdExceptionFilter)
 export class UserController{
@@ -22,6 +23,7 @@ export class UserController{
     }
     // add user
     @Post('/add')
+    
     async addUser(@Body() body:addUser):Promise<any>  {
         //throw new IdException('chitra add user')
        const res =  await this.userService.addUser(body);
