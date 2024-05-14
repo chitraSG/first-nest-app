@@ -1,13 +1,14 @@
-import { HttpException, Controller, Get, Post, Put, Delete, Param, Req, HttpCode, HttpStatus, Res, Header, Redirect, HostParam, Body, Inject, BadRequestException, UseFilters, UseGuards} from '@nestjs/common';
+import { HttpException, Controller, Get, Post, Put, Delete, Param, Req, HttpCode, HttpStatus, Res, Header, Redirect, HostParam, Body, Inject, BadRequestException, UseFilters, UseGuards, UseInterceptors, ParseIntPipe, Query, UsePipes, DefaultValuePipe} from '@nestjs/common';
 import { UserService } from './user.service'
 import { Request, Response } from 'express';
-import { addUser } from './user.dto';
+import { addUser, UpdateUserDto } from './user.dto';
 import { error } from 'console';
 import { IdException } from './exception/id.exception'; 
 import { catchError } from 'rxjs';
 import { IdExceptionFilter } from './exception/id.exception.filter';
 import { UserGaurd } from './user.guard';
-@UseGuards(new UserGaurd())
+import { UserInterceptor } from './interceptors/user.interceptor';
+import { UserPipeValidation } from './pipes/user.pipe';
 @Controller({path:'/user', host: 'localhost' })
 ///@UseFilters(IdExceptionFilter)
 export class UserController{
@@ -23,22 +24,25 @@ export class UserController{
     }
     // add user
     @Post('/add')
-    
+    @UseInterceptors(UserInterceptor)
+    @UseGuards(new UserGaurd())
     async addUser(@Body() body:addUser):Promise<any>  {
-        //throw new IdException('chitra add user')
+        //throw new IdException('new error')
        const res =  await this.userService.addUser(body);
         return res
     }
 
     //update user
-    @Put('/update')
-    updateUser(@Body() body):string {
-        return this.userService.updateUser(body);
+    @Put('/update/:id')
+    async updateUser(@Param('id') id: string, @Body() body: UpdateUserDto):Promise<any> {
+        console.log(id, 'idididid')
+        const res = await this.userService.updateUser(id, body);
+        return res
     }
     //delete user
-    @Delete('/delete/:userId')
-    deleteUser(@Param('userId') userId):string {
-        return this.userService.deleteUser(userId);
+    @Delete('/delete/:id')
+    deleteUser(@Param('id') id):string {
+        return this.userService.deleteUser(id);
     }
 
     //get all user 
@@ -49,7 +53,10 @@ export class UserController{
     }
 
     @Get(':userId')
-    findOne(@Param('userId') userId: number): string {
+    //@UsePipes(new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE}))
+    findOne(@Param('userId') userId: number, @Query("increment", UserPipeValidation) inc:number): any {
+       
+        console.log( inc, 'incincinc 11')
         // if(userId <= 0){
         //     //------------------Exception filter-------------------
         //     //throw new error() // Unregonized error

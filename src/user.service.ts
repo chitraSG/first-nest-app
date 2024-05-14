@@ -21,15 +21,19 @@ export class UserService{
     }
 
     //update user
-    updateUser(body):any {
-        const user = users.findIndex(user => user.id === body.id);
-        users[user] = body;
-        return users;
+    async updateUser(id, body): Promise<any> {
+       
+        const user = await this.usersRepository.findOne({ where: { id } });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        await this.usersRepository.update(id, body);
+        //const result = await this.usersRepository.findOne(body.id);
+        return true;
     }
     //delete user
-    deleteUser(userId):any {
-         users = users.filter(user => user.id !== +userId)
-        return users;
+    deleteUser(id):any { 
+        return this.usersRepository.delete(id);;
     }
 
     //get all user 
@@ -37,9 +41,9 @@ export class UserService{
         return users;
     }
 
-    findOne(userId: number): any {
+    findOne(id: number): any {
         console.log(users, 'usersusersusersusers')
-        const user = users.find(user => user.id === +userId);
+        const user = this.usersRepository.findOne({ where: { id } });
         return user;
     }
     
