@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {Repository } from 'typeorm';
 import { User } from './entity/user.entity';
 
 let users = [];
@@ -15,34 +15,37 @@ export class UserService{
     // add user
     async addUser(body):Promise<any> {
         //users.push(body);
+        const nameExist = await this.findByName(body.name)
+        if(nameExist){
+            throw new NotFoundException(`User with name ${body.name} already exist`);
+        }
         const newUser = this.usersRepository.create(body);
         await this.usersRepository.save(newUser);
-        return newUser;
+        return await this.usersRepository.find();
     }
 
     //update user
     async updateUser(id, body): Promise<any> {
        
-        const user = await this.usersRepository.findOne({ where: { id } });
-        if (!user) {
-            throw new Error('User not found');
-        }
+        await this.findUser(id);
         await this.usersRepository.update(id, body);
         //const result = await this.usersRepository.findOne(body.id);
         return true;
     }
     //delete user
-    deleteUser(id):any { 
+    async deleteUser(id):Promise<any> { 
+        await this.findUser(id);
         return this.usersRepository.delete(id);;
     }
 
     //get all user 
-    findAll():any {
-        return users;
+    async findAll():Promise<any> {
+        const result = await this.usersRepository.find();
+        return result
     }
 
-    findOne(id: number): any {
-        console.log(users, 'usersusersusersusers')
+    async findOne(id: number): Promise<User> {
+        await this.findUser(id);
         const user = this.usersRepository.findOne({ where: { id } });
         return user;
     }
@@ -50,6 +53,16 @@ export class UserService{
     findByName(name: string): any {
         console.log(name, 'name name name')
         const user = this.usersRepository.findOne({ where: { name } });
+        return user;
+    }
+
+    async findUser(id: number): Promise<User> {
+        const user = await this.usersRepository.findOne({ where: { id } });
+        console.log(user, 'useruseruseruser')   
+        if (!user) {
+            throw new NotFoundException(`User with ID ${id} not found`);
+        }
+    
         return user;
     }
 }

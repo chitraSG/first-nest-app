@@ -24,10 +24,9 @@ export class UserController{
     }
     // add user
     @Post('/add')
-    @UseInterceptors(UserInterceptor)
-    @UseGuards(new UserGaurd())
+   // @UseInterceptors(UserInterceptor)
+    //@UseGuards(new UserGaurd())
     async addUser(@Body() body:addUser):Promise<any>  {
-        //throw new IdException('new error')
        const res =  await this.userService.addUser(body);
         return res
     }
@@ -41,13 +40,14 @@ export class UserController{
     }
     //delete user
     @Delete('/delete/:id')
-    deleteUser(@Param('id') id):string {
+    async deleteUser(@Param('id') id):Promise<any> {
         return this.userService.deleteUser(id);
     }
 
     //get all user 
     @Get('/all')
-    findAllUser() {
+    async findAllUser() {
+        console.log('result', 'resultresultresultresult')
         return this.userService.findAll();
         
     }

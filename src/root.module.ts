@@ -17,8 +17,8 @@ const IS_DEV_MODE = false;
     //---------First way to connect to database----
       TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5431,
+      host: 'host.docker.internal',
+      port: 5433,
       username: 'root',
       password: 'root',
       database: 'test',
