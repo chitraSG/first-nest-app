@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './user.module';
-import { OrdersModule } from './orders.module';
-import { ChatModule } from './chat.module';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
+import { UserModule } from './module/user.module';
+import { UserController } from './controller/user.controller';
+import { UserService } from './service/user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigService from @nestjs/config
@@ -44,7 +42,7 @@ const IS_DEV_MODE = false;
     //   },
     //   inject: [ConfigService],
     // }),
-    UserModule, OrdersModule, ChatModule, AuthModule
+    UserModule, AuthModule
   ],
   controllers: [],
   providers: [ 
