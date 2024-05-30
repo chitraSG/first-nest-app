@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './module/user.module';
-import { UserController } from './controller/user.controller';
-import { UserService } from './service/user.service';
+import { UserController } from './user/user.controller';
+import { UsersService } from './user/user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entity/user.entity';
+import { User } from './user/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigService from @nestjs/config
 import * as fs from 'fs';
 import * as path from 'path';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 const IS_DEV_MODE = false;
 @Module({
@@ -20,7 +20,7 @@ const IS_DEV_MODE = false;
       username: 'root',
       password: 'root',
       database: 'test',
-      entities: [__dirname + '/./entity/*.entity{.ts,.js}'],
+      entities: ["src/user/*.ts"],
       synchronize: true,
     }),
 
