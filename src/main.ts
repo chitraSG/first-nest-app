@@ -1,11 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { RootModule } from './root.module';
 import { ValidationPipe } from '@nestjs/common';
-import { IdExceptionFilter } from './exception/id.exception.filter';
+import { IdExceptionFilter } from './user/commands/exception/id.exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'; 
 
 async function bootstrap() {
-  const app = await NestFactory.create(RootModule);
+  const app = await NestFactory.create(RootModule, {
+    cors: {
+      origin: "*"
+    }
+  });
   //app.useGlobalPipes(new ValidationPipe());
   //app.useGlobalFilters(new IdExceptionFilter())
 
