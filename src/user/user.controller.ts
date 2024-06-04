@@ -4,17 +4,19 @@ import { Request, Response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { error } from 'console';
-import { IdException } from '../exception/id.exception'; 
+import { IdException } from './commands/exception/id.exception'; 
 import { catchError } from 'rxjs';
-import { IdExceptionFilter } from '../exception/id.exception.filter';
+import { IdExceptionFilter } from './commands/exception/id.exception.filter';
 import { UserGaurd } from './user.guard';
-import { UserInterceptor } from '../interceptors/user.interceptor';
-import { UserPipeValidation } from '../pipes/user.pipe';
+import { UserInterceptor } from './interceptors/user.interceptor';
+import { UserPipeValidation } from './pipes/user.pipe';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateUserHandler } from './commands/create-user.handler';
 import { GetUserHandler } from './queries/get-user.handler';
 import { CreateUserCommand } from './commands/create-user.command';
 import { GetUserQuery } from './queries/get-user.query';
+import { SocketService } from '../socket.service';
+
 @Controller('user')
 ///@UseFilters(IdExceptionFilter)
 export class UserController{
@@ -23,6 +25,7 @@ export class UserController{
         private readonly userService: UsersService,
         private readonly commandBus: CommandBus,
         private readonly queryBus: QueryBus,
+        private readonly socketService: SocketService
     
         // @Inject('APP_NAME') private appName: string,
         // @Inject('APP_ARRAY') private appArray: string[],
@@ -44,6 +47,18 @@ export class UserController{
     @Get(':id')
     async getUser(@Param('id') userId: string) {
       return this.queryBus.execute(new GetUserQuery(userId));
+    }
+
+    @Get()
+    handleGetRequest(): string {
+        return 'Hello World!';
+    }
+
+    // Example of emitting an event
+    @Get('emit-event')
+    emitEvent(): void {
+        const io = this.socketService.getIoInstance();
+        io.emit('custom-event', 'Hello from the server!');
     }
 
     // //update user
