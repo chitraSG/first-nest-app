@@ -10,8 +10,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - .:/var/app/nest-bp
-      - /var/app/nest-bp/node_modules
+      - .:/var/app/user
+      - /var/app/user/node_modules
     networks:
       - nest-bp-network
     depends_on:
