@@ -8,7 +8,7 @@ export class GatewayService {
   socket: Socket;
 
   @SubscribeMessage("message")
-  handleMessage(@MessageBody() body: any, @ConnectedSocket() client: Socket) {
+  handleMessage(@MessageBody() body: any, @ConnectedSocket() client: any) {
     console.log(body);
     console.log("Connected... client: " + client.id);
     this.socket.except(client.id).emit("message", body);

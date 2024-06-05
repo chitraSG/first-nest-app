@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { GatewayModule } from './gateway/gateway.module';
 
 const IS_DEV_MODE = false;
 @Module({
@@ -42,7 +43,7 @@ const IS_DEV_MODE = false;
     //   },
     //   inject: [ConfigService],
     // }),
-    UserModule, AuthModule
+    UserModule, AuthModule, GatewayModule
   ],
   controllers: [],
   providers: [ 

@@ -4,4 +4,8 @@ import { GatewayService } from './gateway.service';
 @Module({
   providers: [GatewayService]
 })
-export class GatewayModule {}
+export class GatewayModule {
+  constructor() {
+    console.log('GatewayModule loaded');
+  }
+}
