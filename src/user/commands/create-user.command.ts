@@ -1,3 +1,4 @@
+import { CreateUserDto } from '../dto/create-user.dto';
 export class CreateUserCommand {
-    constructor(public readonly username: string, public readonly email: string) {}
-  }
+  constructor(public readonly createUserDto: CreateUserDto) {}
+}

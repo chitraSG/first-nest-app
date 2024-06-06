@@ -1,5 +1,4 @@
 import { HttpException, Controller, Get, Post, Put, Delete, Param, Req, HttpCode, HttpStatus, Res, Header, Redirect, HostParam, Body, Inject, BadRequestException, UseFilters, UseGuards, UseInterceptors, ParseIntPipe, Query, UsePipes, DefaultValuePipe} from '@nestjs/common';
-import { UsersService } from './user.service'
 import { Request, Response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -11,18 +10,16 @@ import { UserGaurd } from './user.guard';
 import { UserInterceptor } from './interceptors/user.interceptor';
 import { UserPipeValidation } from './pipes/user.pipe';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateUserHandler } from './commands/create-user.handler';
-import { GetUserHandler } from './queries/get-user.handler';
 import { CreateUserCommand } from './commands/create-user.command';
-import { GetUserQuery } from './queries/get-user.query';
 import { SocketService } from '../socket.service';
-
+import { UpdateUserCommand } from './commands/update-user.command';
+import { DeleteUserCommand } from './commands/delete-user.command'; // Import the delete user command
+import { GetUserByIdQuery } from './queries/get-user-by-id.query'; // Import the get user by ID query
 @Controller('user')
 ///@UseFilters(IdExceptionFilter)
 export class UserController{
 
     constructor(
-        private readonly userService: UsersService,
         private readonly commandBus: CommandBus,
         private readonly queryBus: QueryBus,
         private readonly socketService: SocketService
@@ -38,28 +35,37 @@ export class UserController{
     @Post('')
    // @UseInterceptors(UserInterceptor)
     //@UseGuards(new UserGaurd())
-    async createUser(@Body() createUserDto:CreateUserDto):Promise<any>  {
-        const { name, password } = createUserDto;
-        return this.commandBus.execute(new CreateUserCommand(name, password));
+    async createUser(@Body() userDto: CreateUserDto): Promise<CreateUserDto> {
+        const command = new CreateUserCommand(userDto);
+        return await this.commandBus.execute(command);
+      }
 
-    }
+      @Put(':id')
+      async updateUser(@Param('id') id: string, @Body() userDto: UpdateUserDto): Promise<UpdateUserDto> {
+        const command = new UpdateUserCommand(id, userDto); // Create an instance of the update user command
+        return await this.commandBus.execute(command);
+      }
+    
+      @Delete(':id') // Add the delete user endpoint
+        async deleteUser(@Param('id') id: number): Promise<any> {
+            const command = new DeleteUserCommand(id); // Create an instance of the delete user command
+            await this.commandBus.execute(command);
+      }
 
-    @Get(':id')
-    async getUser(@Param('id') userId: string) {
-      return this.queryBus.execute(new GetUserQuery(userId));
-    }
+      @Get(':id') // Add the get user by ID endpoint
+        async getUserById(@Param('id') id: number): Promise<any> {
+            const query = new GetUserByIdQuery(id); // Create an instance of the get user by ID command
+            return await this.queryBus.execute(query); // Execute the query using QueryBus
+        }
 
-    @Get()
-    handleGetRequest(): string {
-        return 'Hello World!  111';
-    }
-
-    // Example of emitting an event
-    @Get('emit-event')
-    emitEvent(): void {
-        const io = this.socketService.getIoInstance();
-        io.emit('custom-event', 'Hello from the server!');
-    }
+    
+        //Socket api
+        // Example of emitting an event
+        @Get('emit-event')
+        emitEvent(): void {
+            const io = this.socketService.getIoInstance();
+            io.emit('custom-event', 'Hello from the server!');
+        }
 
     // //update user
     // @Put('/update/:id')
