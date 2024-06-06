@@ -13,8 +13,9 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from './commands/create-user.command';
 import { SocketService } from '../socket.service';
 import { UpdateUserCommand } from './commands/update-user.command';
-import { DeleteUserCommand } from './commands/delete-user.command'; // Import the delete user command
-import { GetUserByIdQuery } from './queries/get-user-by-id.query'; // Import the get user by ID query
+import { DeleteUserCommand } from './commands/delete-user.command'; 
+import { GetUserByIdQuery } from './queries/get-user-by-id.query'; 
+import { GetAllUsersCommand } from './queries/get-all-users.command';
 @Controller('user')
 ///@UseFilters(IdExceptionFilter)
 export class UserController{
@@ -55,6 +56,12 @@ export class UserController{
       @Get(':id') // Add the get user by ID endpoint
         async getUserById(@Param('id') id: number): Promise<any> {
             const query = new GetUserByIdQuery(id); // Create an instance of the get user by ID command
+            return await this.queryBus.execute(query); // Execute the query using QueryBus
+        }
+
+        @Get() // Add the getAllUsers endpoint
+        async getAllUsers(): Promise<any[]> {
+            const query = new GetAllUsersCommand(); // Create an instance of the getAllUsers command
             return await this.queryBus.execute(query); // Execute the query using QueryBus
         }
 

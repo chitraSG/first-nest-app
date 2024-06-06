@@ -9,9 +9,10 @@ import { UserRepository } from './user.repository';
 import { UpdateUserHandler } from './commands/update-user.handler';
 import { DeleteUserHandler } from './commands/delete-user.handler';
 import { GetUserByIdHandler } from './queries/get-user-by-id.handler';
+import { GetAllUsersHandler } from './queries/get-all-users.handler';
 @Module({
   imports: [TypeOrmModule.forFeature([User, UserRepository]), CqrsModule],
-  providers: [CreateUserHandler, SocketService, UserRepository,UpdateUserHandler,DeleteUserHandler, GetUserByIdHandler],
+  providers: [CreateUserHandler, SocketService, UserRepository,UpdateUserHandler,DeleteUserHandler, GetUserByIdHandler, GetAllUsersHandler],
   controllers: [UserController],
   exports: [],
 })
